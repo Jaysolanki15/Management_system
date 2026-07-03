@@ -54,7 +54,10 @@ export function ShopsClient() {
     load();
   }, []);
 
-  const cities = useMemo(() => ["All", ...Array.from(new Set(shops.map((shop) => shop.city).filter(Boolean)))], [shops]);
+  const cities = useMemo(
+    () => ["All", ...Array.from(new Set(shops.map((shop) => shop.city).filter((item): item is string => Boolean(item))))],
+    [shops]
+  );
   const filtered = city === "All" ? shops : shops.filter((shop) => shop.city === city);
 
   function blank(): ShopValues {
