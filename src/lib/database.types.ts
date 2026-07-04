@@ -6,7 +6,6 @@ export type Database = {
       products: {
         Row: {
           id: string;
-          user_id: string;
           name: string;
           wholesale_price: number;
           weight: number;
@@ -18,7 +17,6 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          user_id: string;
           name: string;
           wholesale_price: number;
           weight: number;
@@ -30,7 +28,6 @@ export type Database = {
         };
         Update: {
           id?: string;
-          user_id?: string;
           name?: string;
           wholesale_price?: number;
           weight?: number;
@@ -45,7 +42,6 @@ export type Database = {
       shops: {
         Row: {
           id: string;
-          user_id: string;
           shop_name: string;
           owner_name: string;
           phone: string;
@@ -62,7 +58,6 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          user_id: string;
           shop_name: string;
           owner_name: string;
           phone: string;
@@ -79,7 +74,6 @@ export type Database = {
         };
         Update: {
           id?: string;
-          user_id?: string;
           shop_name?: string;
           owner_name?: string;
           phone?: string;
@@ -99,7 +93,6 @@ export type Database = {
       expenses: {
         Row: {
           id: string;
-          user_id: string;
           name: string;
           category: Database["public"]["Enums"]["expense_category"];
           amount: number;
@@ -111,7 +104,6 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          user_id: string;
           name: string;
           category: Database["public"]["Enums"]["expense_category"];
           amount: number;
@@ -123,7 +115,6 @@ export type Database = {
         };
         Update: {
           id?: string;
-          user_id?: string;
           name?: string;
           category?: Database["public"]["Enums"]["expense_category"];
           amount?: number;
@@ -138,7 +129,6 @@ export type Database = {
       production: {
         Row: {
           id: string;
-          user_id: string;
           product_id: string;
           production_date: string;
           quantity: number;
@@ -151,7 +141,6 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          user_id: string;
           product_id: string;
           production_date?: string;
           quantity: number;
@@ -163,7 +152,6 @@ export type Database = {
         };
         Update: {
           id?: string;
-          user_id?: string;
           product_id?: string;
           production_date?: string;
           quantity?: number;

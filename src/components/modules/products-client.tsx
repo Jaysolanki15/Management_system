@@ -13,14 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
-import { useAuth } from "@/components/auth/auth-provider";
 import type { Product } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase/client";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { productSchema, type ProductValues } from "@/lib/validation";
 
 export function ProductsClient() {
-  const { user } = useAuth();
   const supabase = useMemo(() => createClient(), []);
   const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
@@ -61,10 +59,9 @@ export function ProductsClient() {
   }
 
   async function submit(values: ProductValues) {
-    if (!user) return;
     const result = editing
       ? await supabase.from("products").update(values).eq("id", editing.id)
-      : await supabase.from("products").insert({ ...values, user_id: user.id });
+      : await supabase.from("products").insert(values);
 
     if (result.error) {
       toast.error(result.error.message);

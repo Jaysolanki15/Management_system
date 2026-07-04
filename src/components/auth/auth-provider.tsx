@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { User } from "@supabase/supabase-js";
+import { toast } from "sonner";
+import { hasAllowedEmailConfig, isEmailAllowed } from "@/lib/auth/allowed-emails";
 import { createClient } from "@/lib/supabase/client";
 
 type AuthContextValue = {
@@ -19,14 +21,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
+      if (data.user && (!hasAllowedEmailConfig() || !isEmailAllowed(data.user.email))) {
+        toast.error("This email is not allowed to access this system.");
+        supabase.auth.signOut();
+        setUser(null);
+      } else {
+        setUser(data.user);
+      }
       setLoading(false);
     });
 
     const {
       data: { subscription }
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const nextUser = session?.user ?? null;
+      if (nextUser && (!hasAllowedEmailConfig() || !isEmailAllowed(nextUser.email))) {
+        toast.error("This email is not allowed to access this system.");
+        supabase.auth.signOut();
+        setUser(null);
+      } else {
+        setUser(nextUser);
+      }
       setLoading(false);
     });
 

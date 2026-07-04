@@ -13,14 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
-import { useAuth } from "@/components/auth/auth-provider";
 import type { Shop } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate } from "@/lib/utils";
 import { shopSchema, type ShopValues } from "@/lib/validation";
 
 export function ShopsClient() {
-  const { user } = useAuth();
   const supabase = useMemo(() => createClient(), []);
   const [shops, setShops] = useState<Shop[]>([]);
   const [city, setCity] = useState("All");
@@ -101,10 +99,9 @@ export function ShopsClient() {
   }
 
   async function submit(values: ShopValues) {
-    if (!user) return;
     const result = editing
       ? await supabase.from("shops").update(values).eq("id", editing.id)
-      : await supabase.from("shops").insert({ ...values, user_id: user.id });
+      : await supabase.from("shops").insert(values);
 
     if (result.error) {
       toast.error(result.error.message);

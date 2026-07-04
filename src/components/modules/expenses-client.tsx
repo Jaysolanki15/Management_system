@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
-import { useAuth } from "@/components/auth/auth-provider";
 import { expenseCategories, paymentMethods } from "@/lib/constants";
 import type { Expense } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase/client";
@@ -21,7 +20,6 @@ import { formatCurrency, formatDate, todayISO } from "@/lib/utils";
 import { expenseSchema, type ExpenseValues } from "@/lib/validation";
 
 export function ExpensesClient() {
-  const { user } = useAuth();
   const supabase = useMemo(() => createClient(), []);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [category, setCategory] = useState("All");
@@ -72,10 +70,9 @@ export function ExpensesClient() {
   }
 
   async function submit(values: ExpenseValues) {
-    if (!user) return;
     const result = editing
       ? await supabase.from("expenses").update(values).eq("id", editing.id)
-      : await supabase.from("expenses").insert({ ...values, user_id: user.id });
+      : await supabase.from("expenses").insert(values);
 
     if (result.error) {
       toast.error(result.error.message);

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, Input } from "@/components/ui/field";
+import { hasAllowedEmailConfig, isEmailAllowed } from "@/lib/auth/allowed-emails";
 import { createClient } from "@/lib/supabase/client";
 
 const schema = z.object({
@@ -25,6 +26,16 @@ export function SignIn() {
   const form = useForm<Values>({ resolver: zodResolver(schema), defaultValues: { email: "", password: "" } });
 
   async function onSubmit(values: Values) {
+    if (!hasAllowedEmailConfig()) {
+      toast.error("Allowed login emails are not configured.");
+      return;
+    }
+
+    if (!isEmailAllowed(values.email)) {
+      toast.error("This email is not allowed to access this system.");
+      return;
+    }
+
     setBusy(true);
     const result =
       mode === "signin"

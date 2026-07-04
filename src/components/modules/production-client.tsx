@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
-import { useAuth } from "@/components/auth/auth-provider";
 import type { Product, Production } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, todayISO } from "@/lib/utils";
@@ -24,7 +23,6 @@ type ProductionRow = Production & {
 };
 
 export function ProductionClient() {
-  const { user } = useAuth();
   const supabase = useMemo(() => createClient(), []);
   const [rows, setRows] = useState<ProductionRow[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -86,10 +84,9 @@ export function ProductionClient() {
   }
 
   async function submit(values: ProductionValues) {
-    if (!user) return;
     const result = editing
       ? await supabase.from("production").update(values).eq("id", editing.id)
-      : await supabase.from("production").insert({ ...values, user_id: user.id });
+      : await supabase.from("production").insert(values);
 
     if (result.error) {
       toast.error(result.error.message);
